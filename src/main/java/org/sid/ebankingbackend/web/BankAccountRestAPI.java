@@ -22,7 +22,7 @@ public class BankAccountRestAPI {
         this.bankAccountService = bankAccountService;
     }
 
-    @GetMapping("/accounts/{account")
+    @GetMapping("/accounts/{accountId}")
     public BankAccountDTO getBankAccount(@PathVariable String accountId) throws BankAccountNotFoundException {
        return bankAccountService.getBankAccount(accountId);
     }

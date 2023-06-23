@@ -48,10 +48,10 @@ public class BankAccountMapperImpl {
     }
 
     public CurrentAccount fromCurrentBankAccountDTO(CurrentBankAccountDTO currentBankAccountDTO){
-       CurrentAccount currentAccount=new CurrentAccount();
-       BeanUtils.copyProperties(currentBankAccountDTO,currentAccount);
-       currentAccount.setCustomer(fromCustomerDTO(currentBankAccountDTO.getCustomerDTO()));
-       return currentAccount;
+        CurrentAccount currentAccount=new CurrentAccount();
+        BeanUtils.copyProperties(currentBankAccountDTO,currentAccount);
+        currentAccount.setCustomer(fromCustomerDTO(currentBankAccountDTO.getCustomerDTO()));
+        return currentAccount;
     }
 
     public AccountOperationDTO fromAccountOperation(AccountOperation accountOperation){

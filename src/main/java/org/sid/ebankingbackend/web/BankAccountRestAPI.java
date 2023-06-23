@@ -1,22 +1,18 @@
 package org.sid.ebankingbackend.web;
 
-import org.sid.ebankingbackend.dtos.AccountHistoryDTO;
-import org.sid.ebankingbackend.dtos.AccountOperationDTO;
-import org.sid.ebankingbackend.dtos.BankAccountDTO;
-import org.sid.ebankingbackend.entities.SavingAccount;
+import org.sid.ebankingbackend.dtos.*;
 import org.sid.ebankingbackend.exceptions.BankAccountNotFoundException;
+import org.sid.ebankingbackend.exceptions.BanlanceNotSufficientException;
 import org.sid.ebankingbackend.services.BankAccountService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-
+@CrossOrigin("*")
 public class BankAccountRestAPI {
     private BankAccountService bankAccountService;
+
 
     public BankAccountRestAPI(BankAccountService bankAccountService) {
         this.bankAccountService = bankAccountService;
@@ -24,7 +20,7 @@ public class BankAccountRestAPI {
 
     @GetMapping("/accounts/{accountId}")
     public BankAccountDTO getBankAccount(@PathVariable String accountId) throws BankAccountNotFoundException {
-       return bankAccountService.getBankAccount(accountId);
+        return bankAccountService.getBankAccount(accountId);
     }
     @GetMapping("/accounts")
     public List<BankAccountDTO> listAccounts(){
@@ -32,7 +28,7 @@ public class BankAccountRestAPI {
     }
     @GetMapping("/accounts/{accountId}/operations")
     public List<AccountOperationDTO> getHistory(@PathVariable String accountId){
-       return bankAccountService.accountHistory(accountId);
+        return bankAccountService.accountHistory(accountId);
     }
 
     @GetMapping("/accounts/{accountId}/pageOperations")
@@ -41,5 +37,23 @@ public class BankAccountRestAPI {
             @RequestParam(name="page",defaultValue = "6") int page,
             @RequestParam(name="size",defaultValue = "5") int size) throws BankAccountNotFoundException {
         return bankAccountService.getAccountHistory(accountId,page,size);
+    }
+
+    @PostMapping("/accounts/debit")
+    public DebitDTO debit(@RequestBody DebitDTO debitDTO) throws BankAccountNotFoundException, BanlanceNotSufficientException {
+        this.bankAccountService.debit(debitDTO.getAccountId(),debitDTO.getAmount(),debitDTO.getDescription());
+        return debitDTO;
+    }
+    @PostMapping("/accounts/credit")
+    public CreditDTO credit(@RequestBody CreditDTO creditDTO) throws BankAccountNotFoundException {
+        this.bankAccountService.credit(creditDTO.getAccountId(),creditDTO.getAmount(),creditDTO.getDescription());
+        return creditDTO;
+    }
+    @PostMapping("/accounts/transfer")
+    public void transfer(@RequestBody TransferRequestDTO transferRequestDTO) throws BankAccountNotFoundException, BanlanceNotSufficientException {
+        this.bankAccountService.transfer(
+                transferRequestDTO.getAccountSource(),
+                transferRequestDTO.getAccountDestination(),
+                transferRequestDTO.getAmount());
     }
 }
